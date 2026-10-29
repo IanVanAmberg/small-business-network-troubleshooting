@@ -1,0 +1,455 @@
+==================================================
+IT SUPPORT INCIDENT REPORT
+INC-001: PHYSICAL NETWORK CONNECTIVITY FAILURE
+==================================================
+
+PROJECT: Northstar Office Solutions
+PLATFORM: Cisco Packet Tracer
+ENVIRONMENT: Simulated Small-Business Network
+
+INCIDENT ID: INC-001
+CATEGORY: Network Connectivity
+SUBCATEGORY: Physical / Ethernet Connection
+PRIORITY: Medium (Simulated)
+AFFECTED DEPARTMENT: Operations
+AFFECTED DEVICE: PC-Operations
+FINAL STATUS: RESOLVED
+
+--------------------------------------------------
+1. INCIDENT DESCRIPTION
+--------------------------------------------------
+
+A simulated employee in the Operations department reported losing access to the company network and internal employee portal.
+
+The reported issue affected a single workstation, while other employees continued to access network resources normally.
+
+The objective was to investigate the connectivity failure, identify its underlying cause, restore network access, and verify that affected services were operational.
+
+The incident was successfully diagnosed and resolved through systematic troubleshooting.
+
+--------------------------------------------------
+2. INITIAL NETWORK CONDITIONS
+--------------------------------------------------
+
+Affected Workstation:
+PC-Operations
+
+Network:
+192.168.10.0/24
+
+Default Gateway:
+192.168.10.1
+
+Infrastructure Server:
+192.168.10.10
+
+Application Server:
+10.0.0.10
+
+Internal Application:
+portal.lab.test
+
+Before introducing the simulated failure, the workstation successfully communicated with its default gateway and internal application server.
+
+The internal employee portal was also accessible through its configured DNS hostname.
+
+These successful baseline tests confirmed that the network was operational before the incident.
+
+Initial Network Status: OPERATIONAL
+
+--------------------------------------------------
+3. INCIDENT SIMULATION
+--------------------------------------------------
+
+The Ethernet connection between PC-Operations and SW-Office was intentionally disconnected in Cisco Packet Tracer.
+
+Affected Connection:
+
+PC-Operations FastEthernet0
+to
+SW-Office FastEthernet0/1
+
+This simulated a physical disconnection of an employee workstation from the company network.
+
+After disconnecting the cable, the affected workstation lost access to network resources.
+
+Other workstations remained connected, demonstrating that the simulated failure was isolated to a single device.
+
+Simulation Result: SUCCESSFUL
+
+--------------------------------------------------
+4. DIAGNOSTIC PROCEDURE
+--------------------------------------------------
+
+STEP 1: WORKSTATION CONFIGURATION
+
+Command:
+ipconfig
+
+Purpose:
+Inspect the workstation's network configuration and begin identifying possible causes of connectivity failure.
+
+Actual Observation:
+The workstation's network configuration was inspected following the simulated physical disconnection.
+
+The investigation proceeded to connectivity testing to determine whether the workstation could communicate with its local network.
+
+Result: COMPLETED
+
+
+STEP 2: LOCAL GATEWAY CONNECTIVITY
+
+Command:
+ping 192.168.10.1
+
+Purpose:
+Determine whether the workstation could communicate with its default gateway.
+
+Actual Result:
+The connectivity test failed following the physical disconnection.
+
+PC-Operations could no longer communicate with the router's Office Network interface.
+
+Result: FAILED AS EXPECTED
+
+
+STEP 3: APPLICATION SERVER CONNECTIVITY
+
+Command:
+ping 10.0.0.10
+
+Purpose:
+Determine whether the workstation could reach the application server located on a separate subnet.
+
+Actual Result:
+The connectivity test failed.
+
+The workstation was unable to reach the internal application server because its physical network connection was unavailable.
+
+Result: FAILED AS EXPECTED
+
+
+STEP 4: COMPARISON WORKSTATION
+
+Device:
+PC-Sales
+
+Commands:
+
+ping 192.168.10.1
+ping 10.0.0.10
+
+Purpose:
+Determine whether the connectivity issue affected the entire Office Network or a single workstation.
+
+Actual Result:
+Both connectivity tests completed successfully.
+
+PC-Sales maintained communication with the default gateway and application server.
+
+These results confirmed that the wider network remained operational and supported the conclusion that the failure was isolated to PC-Operations.
+
+Result: PASSED
+
+
+STEP 5: SWITCH PORT INVESTIGATION
+
+Device:
+SW-Office
+
+Interface:
+FastEthernet0/1
+
+Command:
+show interfaces fastEthernet0/1
+
+Purpose:
+Inspect the switch interface's operational status and determine whether an active physical connection existed.
+
+Actual Result:
+The switch interface indicated that the physical connection was down.
+
+This finding was consistent with the disconnected Ethernet cable and corroborated the loss of workstation connectivity.
+
+Result: PHYSICAL LINK FAILURE CONFIRMED
+
+--------------------------------------------------
+5. ROOT CAUSE ANALYSIS
+--------------------------------------------------
+
+Confirmed Root Cause:
+Physical disconnection of the Ethernet cable between PC-Operations and SW-Office.
+
+Affected Network Layer:
+OSI Layer 1 - Physical Layer
+
+The workstation lost connectivity because its Ethernet cable was intentionally disconnected from the office switch.
+
+Without an operational physical connection, the workstation could not exchange network traffic with its default gateway, infrastructure server, or application server.
+
+Diagnostic testing confirmed that the issue was isolated to PC-Operations.
+
+The comparison workstation maintained successful connectivity, while the affected switch port indicated an inactive connection.
+
+These findings supported the identification of a physical link failure rather than a broader router, DHCP, DNS, or server outage.
+
+Root Cause Status: CONFIRMED
+
+--------------------------------------------------
+6. CORRECTIVE ACTION
+--------------------------------------------------
+
+The physical network connection was restored by reconnecting PC-Operations to SW-Office.
+
+Connection Restored:
+
+PC-Operations FastEthernet0
+to
+SW-Office FastEthernet0/1
+
+Cable Type:
+Copper Straight-Through Ethernet
+
+Corrective Procedure:
+
+A) Selected the appropriate Ethernet connection type in Cisco Packet Tracer.
+
+B) Reconnected the workstation to its original switch port.
+
+C) Allowed the switch interface to establish an operational link.
+
+D) Verified workstation network connectivity.
+
+E) Repeated connectivity tests against the default gateway, infrastructure server, and application server.
+
+F) Confirmed access to the internal employee portal.
+
+The corrective action successfully restored the workstation's network connection.
+
+No additional configuration changes were required.
+
+Corrective Action Status: SUCCESSFUL
+
+--------------------------------------------------
+7. POST-RESOLUTION VERIFICATION
+--------------------------------------------------
+
+TEST 01: DEFAULT GATEWAY
+
+Command:
+ping 192.168.10.1
+
+Actual Result:
+The workstation successfully communicated with its default gateway after the Ethernet connection was restored.
+
+Status: PASSED
+
+
+TEST 02: INFRASTRUCTURE SERVER
+
+Command:
+ping 192.168.10.10
+
+Actual Result:
+The workstation successfully communicated with the infrastructure server.
+
+This confirmed that local network communication had been restored.
+
+Status: PASSED
+
+
+TEST 03: APPLICATION SERVER
+
+Command:
+ping 10.0.0.10
+
+Actual Result:
+The workstation successfully communicated with the application server located on the separate Application Network.
+
+This verified that inter-subnet connectivity had been restored.
+
+Status: PASSED
+
+
+TEST 04: EMPLOYEE PORTAL
+
+URL:
+http://portal.lab.test
+
+Actual Result:
+The internal employee portal loaded successfully after the physical connection was restored.
+
+This verified that the workstation could once again access the company's internal web application.
+
+Status: PASSED
+
+
+FINAL VERIFICATION:
+
+All post-resolution connectivity tests completed successfully.
+
+The affected workstation regained access to local network resources, the remote application server, and the internal employee portal.
+
+The simulated incident was fully resolved without additional complications.
+
+Overall Verification Status: PASSED
+
+--------------------------------------------------
+8. PREVENTIVE RECOMMENDATIONS
+--------------------------------------------------
+
+A) Verify physical cable connections before changing network configurations.
+
+B) Check workstation network indicators and switch port status during initial troubleshooting.
+
+C) Inspect Ethernet cables for damage, loose connections, or improper installation.
+
+D) Compare the affected workstation against a known-working device to determine the scope of the incident.
+
+E) Confirm that switch ports have established operational links before investigating higher-level network services.
+
+F) Document diagnostic findings and verify connectivity after corrective actions.
+
+G) Maintain clearly labeled workstation connections to simplify future troubleshooting.
+
+--------------------------------------------------
+9. TECHNICAL SKILLS DEMONSTRATED
+--------------------------------------------------
+
+A) Physical Network Troubleshooting
+
+Diagnosed a simulated physical network connection failure affecting an employee workstation.
+
+B) Ethernet Connectivity Diagnostics
+
+Identified the relationship between physical connectivity and successful network communication.
+
+C) Switch Interface Status Inspection
+
+Used Cisco IOS commands to inspect the operational status of the affected switch port.
+
+D) TCP/IP Connectivity Testing
+
+Used ICMP ping tests to assess workstation connectivity with local and remote network resources.
+
+E) Workstation-Level Incident Isolation
+
+Compared affected and unaffected workstations to determine the scope of the problem.
+
+F) Root Cause Analysis
+
+Correlated failed connectivity tests and switch interface status to identify the underlying physical failure.
+
+G) Network Service Restoration
+
+Restored the Ethernet connection and confirmed normal network operation.
+
+H) Post-Resolution Verification
+
+Repeated diagnostic tests to verify that the corrective action resolved the incident.
+
+I) Technical Documentation
+
+Recorded the incident symptoms, diagnostic procedures, findings, corrective actions, and final verification results.
+
+--------------------------------------------------
+10. PORTFOLIO EVIDENCE
+--------------------------------------------------
+
+INC001_01_Healthy_Connectivity.png
+
+Documents successful workstation connectivity before the simulated failure.
+
+
+INC001_02_Disconnected_Link.png
+
+Documents the intentional disconnection of the Ethernet cable between PC-Operations and SW-Office.
+
+
+INC001_03_Failed_Connectivity.png
+
+Documents unsuccessful connectivity tests while the workstation was disconnected.
+
+
+INC001_04_Switch_Port_Down.png
+
+Documents the inactive switch interface identified during troubleshooting.
+
+
+INC001_05_Connectivity_Restored.png
+
+Documents successful connectivity tests following restoration of the physical network connection.
+
+--------------------------------------------------
+11. INCIDENT RESOLUTION SUMMARY
+--------------------------------------------------
+
+Incident Status:
+RESOLVED
+
+Confirmed Root Cause:
+Disconnected Ethernet cable between PC-Operations and SW-Office.
+
+Affected Network Layer:
+OSI Layer 1 - Physical
+
+Corrective Action:
+Restored the Ethernet connection between the workstation and its assigned switch port.
+
+Default Gateway Connectivity:
+PASSED
+
+Infrastructure Server Connectivity:
+PASSED
+
+Application Server Connectivity:
+PASSED
+
+Internal Employee Portal:
+ACCESS RESTORED
+
+Additional Problems:
+None.
+
+Corrective Action Outcome:
+SUCCESSFUL
+
+The simulated physical connectivity incident was successfully diagnosed and resolved.
+
+Initial testing confirmed that the issue affected only PC-Operations.
+
+Switch interface inspection corroborated the physical link failure.
+
+Restoring the Ethernet connection resolved the problem without requiring changes to IP addressing, routing, DHCP, DNS, or application services.
+
+All required post-resolution tests passed.
+
+--------------------------------------------------
+12. TECHNICAL OUTCOME AND LESSONS LEARNED
+--------------------------------------------------
+
+This incident demonstrated the importance of systematic troubleshooting when responding to network connectivity failures.
+
+By comparing an affected workstation with a functioning device, the investigation narrowed the scope of the incident and avoided unnecessary changes to shared infrastructure.
+
+Switch interface inspection provided additional evidence supporting the physical connection failure.
+
+The incident reinforced the importance of beginning network diagnostics with physical connectivity before investigating more complex routing or application problems.
+
+Successful restoration and verification demonstrated a complete IT support troubleshooting workflow, including initial assessment, fault isolation, root cause identification, corrective action, and service validation.
+
+The exercise provided practical experience with network troubleshooting and incident documentation in a simulated small-business environment.
+
+--------------------------------------------------
+13. NEXT INCIDENT
+--------------------------------------------------
+
+INC-002: DNS CONFIGURATION FAILURE
+
+Simulate incorrect workstation DNS settings that prevent access to the internal employee portal by hostname.
+
+The next incident will focus on identifying DNS resolution problems while distinguishing them from IP connectivity and application server failures.
+
+==================================================
+END OF INCIDENT INC-001
+==================================================

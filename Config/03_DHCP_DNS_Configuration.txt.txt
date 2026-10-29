@@ -1,0 +1,269 @@
+==================================================
+DHCP AND DNS SERVER CONFIGURATION
+==================================================
+
+PROJECT: Northstar Office Solutions
+DEVICE: SRV-Infra
+PLATFORM: Cisco Packet Tracer
+ROLE: DHCP and DNS Infrastructure Server
+
+--------------------------------------------------
+1. CONFIGURATION OBJECTIVE
+--------------------------------------------------
+
+The objective of this stage was to configure a centralized infrastructure server providing DHCP and DNS services for the simulated Office Network.
+
+DHCP was implemented to automate workstation IP configuration, while DNS was configured to translate the company's internal application hostname into its IPv4 address.
+
+These services are essential for maintaining reliable network connectivity and access to business resources.
+
+Both services were successfully configured and validated without any reported issues.
+
+--------------------------------------------------
+2. SERVER IP CONFIGURATION
+--------------------------------------------------
+
+Device: SRV-Infra
+
+IP Address: 192.168.10.10
+Subnet Mask: 255.255.255.0
+Default Gateway: 192.168.10.1
+DNS Server: 192.168.10.10
+
+Assignment Type: Static
+
+A static IPv4 address was selected to ensure that employee workstations can consistently locate the DHCP and DNS infrastructure server.
+
+The server was successfully configured, and connectivity to the default gateway was verified.
+
+--------------------------------------------------
+3. DHCP CONFIGURATION
+--------------------------------------------------
+
+Service: DHCP
+Service Status: Enabled
+Pool Name: OFFICE
+
+Starting IP Address: 192.168.10.100
+Ending IP Address: 192.168.10.124
+Subnet Mask: 255.255.255.0
+Default Gateway: 192.168.10.1
+DNS Server: 192.168.10.10
+Maximum Users: 25
+
+DHCP provides automatic IP addressing and network configuration to employee workstations.
+
+The configured pool excludes infrastructure addresses, including the router and server, to reduce the risk of IP conflicts.
+
+The DHCP service was successfully enabled and the OFFICE address pool was created.
+
+--------------------------------------------------
+4. DNS CONFIGURATION
+--------------------------------------------------
+
+Service: DNS
+Service Status: Enabled
+Record Type: A
+
+Hostname: portal.lab.test
+IP Address: 10.0.0.10
+
+The DNS service translates the internal application hostname into the IPv4 address of the application server.
+
+This allows employee workstations to locate internal resources by hostname rather than requiring manually entered IP addresses.
+
+The DNS service was successfully configured, and the A record was created without errors.
+
+--------------------------------------------------
+5. CONFIGURATION VERIFICATION
+--------------------------------------------------
+
+TEST 01: STATIC SERVER CONFIGURATION
+
+Method:
+Inspected the server's IP Configuration settings and verified connectivity to the default gateway.
+
+Actual Result:
+The server retained its assigned static IPv4 configuration and successfully communicated with the router at 192.168.10.1.
+
+Result: PASSED
+
+
+TEST 02: DHCP ADDRESS ASSIGNMENT
+
+Method:
+Configured PC-Operations to request its IPv4 settings automatically using DHCP.
+
+Actual Assigned IP:
+Valid address within 192.168.10.100 - 192.168.10.124
+
+Actual Default Gateway:
+192.168.10.1
+
+Actual DNS Server:
+192.168.10.10
+
+Actual Result:
+PC-Operations successfully obtained its network configuration from the DHCP service.
+
+The workstation received a valid IPv4 address, subnet mask, default gateway, and DNS server configuration.
+
+Result: PASSED
+
+
+TEST 03: LOCAL CONNECTIVITY
+
+Commands:
+
+ping 192.168.10.1
+ping 192.168.10.10
+
+Actual Result:
+Both connectivity tests completed successfully.
+
+PC-Operations successfully communicated with the default gateway and infrastructure server.
+
+These results confirmed basic local network connectivity between the workstation and infrastructure devices.
+
+Result: PASSED
+
+
+TEST 04: DNS RESOLUTION
+
+Command:
+
+nslookup portal.lab.test
+
+Expected DNS Result:
+10.0.0.10
+
+Actual Result:
+The DNS query completed successfully.
+
+The hostname portal.lab.test resolved to the configured application server address, 10.0.0.10.
+
+This confirmed that the workstation could successfully query the configured internal DNS service and retrieve the appropriate IPv4 address.
+
+Result: PASSED
+
+--------------------------------------------------
+6. TECHNICAL KNOWLEDGE APPLIED
+--------------------------------------------------
+
+A) Static IPv4 Addressing
+
+Configured a static server address to ensure consistent availability of critical infrastructure services.
+
+B) DHCP Pool Configuration
+
+Established an automatic IPv4 address allocation range for employee workstations.
+
+C) Automatic Workstation Configuration
+
+Verified that client devices could obtain network settings through DHCP.
+
+D) DNS Hostname Resolution
+
+Created and validated an A record mapping an internal hostname to its corresponding IPv4 address.
+
+E) IPv4 Subnet and Gateway Configuration
+
+Applied appropriate network addressing and gateway information to support device connectivity.
+
+F) Network Connectivity Verification
+
+Used command-line diagnostic tools to verify communication between devices.
+
+G) Network Service Validation
+
+Confirmed DHCP and DNS functionality through workstation-level testing.
+
+H) Technical Documentation
+
+Recorded configuration details, diagnostic commands, test results, and successful service validation.
+
+--------------------------------------------------
+7. PORTFOLIO EVIDENCE
+--------------------------------------------------
+
+05_Infrastructure_Server_IP.png
+
+Documents the static IPv4 address, subnet mask, default gateway, and DNS configuration assigned to SRV-Infra.
+
+
+06_DHCP_Pool_Configuration.png
+
+Documents the active DHCP service and configured OFFICE address pool.
+
+
+07_DNS_A_Record.png
+
+Documents the internal DNS A record mapping portal.lab.test to 10.0.0.10.
+
+
+08_Workstation_DHCP_Verification.png
+
+Documents successful automatic IP address assignment to PC-Operations.
+
+
+09_DNS_Resolution_Test.png
+
+Documents successful hostname resolution using the workstation's DNS configuration.
+
+--------------------------------------------------
+8. CONFIGURATION STATUS
+--------------------------------------------------
+
+Server Static IP:
+COMPLETED
+
+DHCP Service:
+COMPLETED
+
+DNS Service:
+COMPLETED
+
+DHCP Verification:
+PASSED
+
+DNS Verification:
+PASSED
+
+Local Connectivity:
+PASSED
+
+Problems Encountered:
+None.
+
+Corrective Actions:
+None required.
+
+All planned configuration tasks and validation tests were completed successfully without reported errors.
+
+--------------------------------------------------
+9. RESULTS AND TECHNICAL OUTCOME
+--------------------------------------------------
+
+The infrastructure server was successfully configured to provide centralized DHCP and DNS services for the simulated Office Network.
+
+PC-Operations successfully obtained its network configuration through DHCP and established connectivity with the router and infrastructure server.
+
+DNS testing confirmed that the internal hostname portal.lab.test correctly resolved to the application's assigned IPv4 address.
+
+The successful tests established a functional foundation for subsequent inter-subnet connectivity validation and network troubleshooting scenarios.
+
+This stage demonstrates practical experience with basic network service configuration, IP addressing, diagnostic commands, and systematic verification procedures in a simulated IT support environment.
+
+--------------------------------------------------
+10. NEXT STAGE
+--------------------------------------------------
+
+Configure the internal application server, SRV-Portal, with a static IPv4 address and HTTP service.
+
+Verify communication between the Office and Application network segments.
+
+Test employee access to the internal web application using both its IPv4 address and DNS hostname.
+
+==================================================
+END OF DHCP AND DNS DOCUMENTATION
+==================================================

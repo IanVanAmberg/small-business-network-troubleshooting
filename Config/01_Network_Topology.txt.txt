@@ -1,0 +1,125 @@
+==================================================
+NETWORK TOPOLOGY DESIGN AND IMPLEMENTATION
+==================================================
+
+PROJECT: Northstar Office Solutions
+ENVIRONMENT: Cisco Packet Tracer
+PROJECT TYPE: Self-Directed IT Support Simulation
+
+--------------------------------------------------
+1. PURPOSE
+--------------------------------------------------
+
+The purpose of this stage was to design and assemble a simulated small-business network topology representing the infrastructure used by Northstar Office Solutions.
+
+The network was designed to support employee workstations, centralized DHCP and DNS services, and an internal company application hosted on a separate network segment.
+
+This layout establishes the infrastructure required for future network configuration, connectivity testing, and incident troubleshooting.
+
+--------------------------------------------------
+2. NETWORK DESIGN
+--------------------------------------------------
+
+The environment consists of two network segments connected through a Cisco router.
+
+OFFICE NETWORK
+Subnet: 192.168.10.0/24
+
+This network contains two employee workstations and one infrastructure server, connected through a Cisco 2960 switch.
+
+APPLICATION NETWORK
+Subnet: 10.0.0.0/24
+
+This network contains the internal application server, connected through a separate Cisco 2960 switch.
+
+The two networks are physically connected through a Cisco 2911 router.
+
+--------------------------------------------------
+3. DEVICES USED
+--------------------------------------------------
+
+R1
+Model: Cisco 2911 Router
+Purpose: Connects the Office and Application networks.
+
+SW-Office
+Model: Cisco 2960 Switch
+Purpose: Connects office workstations and infrastructure services.
+
+SW-App
+Model: Cisco 2960 Switch
+Purpose: Connects the internal application server.
+
+PC-Operations
+Model: PC-PT
+Purpose: Simulated Operations employee workstation.
+
+PC-Sales
+Model: PC-PT
+Purpose: Simulated Sales employee workstation.
+
+SRV-Infra
+Model: Server-PT
+Purpose: Planned DHCP and DNS infrastructure.
+
+SRV-Portal
+Model: Server-PT
+Purpose: Planned internal web application server.
+
+--------------------------------------------------
+4. PHYSICAL CONNECTIONS
+--------------------------------------------------
+
+PC-Operations FastEthernet0 -> SW-Office Fa0/1
+
+PC-Sales FastEthernet0 -> SW-Office Fa0/2
+
+SRV-Infra FastEthernet0 -> SW-Office Fa0/3
+
+SW-Office Fa0/24 -> R1 GigabitEthernet0/0
+
+R1 GigabitEthernet0/1 -> SW-App Fa0/24
+
+SW-App Fa0/1 -> SRV-Portal FastEthernet0
+
+Cable Type: Copper Straight-Through
+
+--------------------------------------------------
+5. DESIGN CONSIDERATIONS
+--------------------------------------------------
+
+The network separates employee workstations and application infrastructure into two logical IP networks.
+
+A router is used to connect these networks, while switches provide local connectivity for devices within each network segment.
+
+DHCP and DNS services will be hosted on a centralized infrastructure server.
+
+This architecture supports troubleshooting scenarios involving physical connectivity, IP addressing, name resolution, default gateways, and DHCP availability.
+
+--------------------------------------------------
+6. CURRENT STATUS
+--------------------------------------------------
+
+Physical network topology assembled.
+
+All planned devices added, renamed, and connected.
+
+IP addressing, router configuration, DHCP, DNS, and application services have not yet been configured or verified.
+
+Connectivity testing will be performed in the next stage.
+
+--------------------------------------------------
+7. PORTFOLIO EVIDENCE
+--------------------------------------------------
+
+Screenshot:
+01_Initial_Network_Topology.png
+
+Description:
+Initial Cisco Packet Tracer network topology showing seven connected devices across two planned network segments.
+
+The screenshot documents network design and physical connections before IP configuration and service validation.
+
+==================================================
+END OF NETWORK TOPOLOGY DOCUMENTATION
+==================================================

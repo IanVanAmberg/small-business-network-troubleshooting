@@ -1,0 +1,273 @@
+==================================================
+ROUTER CONFIGURATION AND VALIDATION
+==================================================
+
+PROJECT: Northstar Office Solutions
+DEVICE: R1
+MODEL: Cisco 2911
+PLATFORM: Cisco Packet Tracer
+
+--------------------------------------------------
+1. CONFIGURATION OBJECTIVE
+--------------------------------------------------
+
+The objective of this stage was to configure the central router connecting the Office and Application network segments.
+
+The router was assigned two IPv4 interfaces, each serving as the default gateway for its respective subnet.
+
+This configuration establishes the routing infrastructure required for communication between employee workstations, internal network services, and the company application server.
+
+Both router interfaces were successfully configured, activated, and validated without any reported issues.
+
+--------------------------------------------------
+2. INTERFACE CONFIGURATION
+--------------------------------------------------
+
+INTERFACE: GigabitEthernet0/0
+
+Description: OFFICE_LAN
+IP Address: 192.168.10.1
+Subnet Mask: 255.255.255.0
+Connected Network: 192.168.10.0/24
+Connected Device: SW-Office
+Operational Status: up/up
+
+INTERFACE: GigabitEthernet0/1
+
+Description: APPLICATION_LAN
+IP Address: 10.0.0.1
+Subnet Mask: 255.255.255.0
+Connected Network: 10.0.0.0/24
+Connected Device: SW-App
+Operational Status: up/up
+
+--------------------------------------------------
+3. CONFIGURATION PROCEDURE
+--------------------------------------------------
+
+The router was configured through the Cisco IOS command-line interface.
+
+Configuration tasks included:
+
+A) Entering privileged EXEC and global configuration modes.
+
+B) Assigning the hostname R1.
+
+C) Configuring IPv4 addressing for both GigabitEthernet interfaces.
+
+D) Assigning descriptions to identify connected network segments.
+
+E) Administratively enabling each interface using the no shutdown command.
+
+F) Inspecting interface status and the routing table.
+
+G) Saving the running configuration to startup configuration.
+
+All configuration commands were executed successfully without errors.
+
+--------------------------------------------------
+4. CONFIGURATION VALIDATION
+--------------------------------------------------
+
+COMMAND: show ip interface brief
+
+Purpose:
+Verify assigned IPv4 addresses and operational interface status.
+
+ACTUAL RESULTS:
+
+GigabitEthernet0/0
+IP Address: 192.168.10.1
+Status: up/up
+
+GigabitEthernet0/1
+IP Address: 10.0.0.1
+Status: up/up
+
+Both configured interfaces displayed an operational status of up/up, confirming that the interfaces and their associated line protocols were active.
+
+Result: PASSED
+
+
+COMMAND: show ip route
+
+Purpose:
+Verify that the router recognizes both directly connected IPv4 networks.
+
+ACTUAL CONNECTED NETWORKS:
+
+192.168.10.0/24
+10.0.0.0/24
+
+Both networks appeared in the routing table as directly connected routes.
+
+This confirmed that the router recognized both network segments and had the necessary routes to forward traffic between them.
+
+Result: PASSED
+
+
+COMMAND: show running-config
+
+Purpose:
+Inspect the active router configuration to verify interface addressing, descriptions, and administrative settings.
+
+ACTUAL RESULT:
+
+Both router interfaces displayed the correct IPv4 configurations and interface descriptions.
+
+The interfaces were administratively enabled, and no configuration errors were identified.
+
+Result: PASSED
+
+
+COMMAND: copy running-config startup-config
+
+Purpose:
+Save the active configuration to the router's startup configuration.
+
+ACTUAL RESULT:
+
+The router configuration was saved successfully.
+
+Result: PASSED
+
+--------------------------------------------------
+5. ACTUAL VALIDATION RESULTS
+--------------------------------------------------
+
+GigabitEthernet0/0:
+up/up - Operational
+
+GigabitEthernet0/1:
+up/up - Operational
+
+Office Network Visible in Routing Table:
+YES - 192.168.10.0/24
+
+Application Network Visible in Routing Table:
+YES - 10.0.0.0/24
+
+Router Interface Configuration:
+PASSED
+
+Routing Table Verification:
+PASSED
+
+Configuration Saved Successfully:
+YES
+
+Problems Encountered:
+None.
+
+Corrective Actions Performed:
+None required.
+
+All configuration and validation procedures were completed successfully without reported errors.
+
+--------------------------------------------------
+6. TECHNICAL KNOWLEDGE APPLIED
+--------------------------------------------------
+
+A) IPv4 Addressing and Subnet Identification
+
+Configured unique IPv4 addresses for the router's network interfaces and identified their corresponding subnets.
+
+B) Default Gateway Configuration
+
+Established the router interfaces that will serve as default gateways for devices on each network.
+
+C) Router Interface Administration
+
+Used Cisco IOS commands to configure, describe, and activate network interfaces.
+
+D) Directly Connected Network Routing
+
+Verified that both connected subnets appeared in the router's routing table.
+
+E) Command-Line Network Configuration
+
+Performed router configuration and inspection through the Cisco IOS command-line interface.
+
+F) Network Configuration Verification
+
+Used diagnostic commands to confirm interface operational status and routing information.
+
+G) Configuration Persistence
+
+Saved the active running configuration to the startup configuration to preserve router settings.
+
+H) Technical Documentation
+
+Recorded network specifications, configuration procedures, command outputs, and validation results.
+
+--------------------------------------------------
+7. PORTFOLIO EVIDENCE
+--------------------------------------------------
+
+02_Router_Initial_Status.png
+
+Documents the router interface status before configuration.
+
+
+03_Router_Interfaces_Configured.png
+
+Documents the configured router interfaces, their assigned IPv4 addresses, and successful up/up operational status.
+
+
+04_Router_Routing_Table.png
+
+Documents the router's recognition of both directly connected IPv4 networks.
+
+--------------------------------------------------
+8. PROJECT STATUS
+--------------------------------------------------
+
+Router Configuration:
+COMPLETED
+
+Office Network Interface:
+CONFIGURED AND OPERATIONAL
+
+Application Network Interface:
+CONFIGURED AND OPERATIONAL
+
+Interface Status Verification:
+PASSED
+
+Routing Table Verification:
+PASSED
+
+Configuration Persistence:
+SAVED SUCCESSFULLY
+
+Problems Encountered:
+NONE
+
+Corrective Actions:
+NONE REQUIRED
+
+--------------------------------------------------
+9. RESULTS AND TECHNICAL OUTCOME
+--------------------------------------------------
+
+The Cisco 2911 router was successfully configured to connect the Office and Application network segments.
+
+Both GigabitEthernet interfaces were assigned the appropriate IPv4 addresses and subnet masks.
+
+Interface verification confirmed that both connections were operational, displaying an up/up status.
+
+Routing table inspection confirmed that the router recognized the Office and Application networks as directly connected.
+
+The completed configuration established the foundation for communication between both network segments.
+
+This stage demonstrated practical experience with Cisco IOS, IPv4 addressing, router interface administration, routing table verification, and network configuration documentation.
+
+End-to-end workstation-to-application connectivity will be validated during the application server configuration stage.
+
+--------------------------------------------------
+10. NEXT STAGE
+--------------------------------------------------
+
+Configure the infrastructure server, including static IPv4 addressing, DHCP, and DNS services.
+
+Validate automatic

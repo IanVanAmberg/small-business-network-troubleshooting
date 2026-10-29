@@ -1,0 +1,595 @@
+==================================================
+IT SUPPORT INCIDENT REPORT
+INC-003: DEFAULT GATEWAY MISCONFIGURATION
+==================================================
+
+PROJECT: Northstar Office Solutions
+PLATFORM: Cisco Packet Tracer
+ENVIRONMENT: Simulated Small-Business Network
+
+INCIDENT ID: INC-003
+CATEGORY: Network Connectivity
+SUBCATEGORY: IPv4 / Default Gateway
+PRIORITY: Medium (Simulated)
+AFFECTED DEPARTMENT: Sales
+AFFECTED DEVICE: PC-Sales
+FINAL STATUS: RESOLVED
+
+--------------------------------------------------
+1. INCIDENT DESCRIPTION
+--------------------------------------------------
+
+A simulated employee in the Sales department reported being unable to access the company's internal employee portal.
+
+The employee could communicate with devices on the local Office Network but could not access resources located on the separate Application Network.
+
+Other employee workstations continued to operate normally.
+
+The objective of this incident was to investigate the difference between local and remote network connectivity, identify the underlying cause, restore access, and verify normal network operation.
+
+The incident was successfully diagnosed and resolved through systematic troubleshooting without additional complications.
+
+--------------------------------------------------
+2. INITIAL NETWORK CONDITIONS
+--------------------------------------------------
+
+Affected Workstation:
+PC-Sales
+
+Office Network:
+192.168.10.0/24
+
+Subnet Mask:
+255.255.255.0
+
+Correct Default Gateway:
+192.168.10.1
+
+Infrastructure Server:
+192.168.10.10
+
+Application Network:
+10.0.0.0/24
+
+Application Server:
+10.0.0.10
+
+DNS Server:
+192.168.10.10
+
+Internal Application:
+portal.lab.test
+
+Before introducing the simulated failure, PC-Sales successfully communicated with its default gateway, infrastructure server, and application server.
+
+The internal employee portal was also accessible through its configured hostname.
+
+These baseline tests confirmed that the network infrastructure and application services were operational before the incident.
+
+Initial Network Status: OPERATIONAL
+
+--------------------------------------------------
+3. INCIDENT SIMULATION
+--------------------------------------------------
+
+The default gateway configuration of PC-Sales was intentionally modified.
+
+The workstation was changed from DHCP to Static IPv4 configuration while preserving its original IP address, subnet mask, and DNS server.
+
+The default gateway was changed from:
+
+192.168.10.1
+
+To:
+
+192.168.10.254
+
+The replacement address was not assigned to an operational router in the simulated Office Network.
+
+This introduced a workstation-level configuration error that prevented communication with resources located outside the local subnet.
+
+The workstation maintained its physical network connection and continued communicating with local devices.
+
+The router, infrastructure server, DHCP and DNS services, and application server were left unchanged.
+
+Following the configuration change, local connectivity remained operational while inter-subnet communication failed.
+
+Simulation Result: SUCCESSFUL
+
+--------------------------------------------------
+4. DIAGNOSTIC PROCEDURE
+--------------------------------------------------
+
+STEP 1: INSPECT WORKSTATION CONFIGURATION
+
+Command:
+ipconfig /all
+
+Purpose:
+Inspect the workstation's IPv4 address, subnet mask, default gateway, and DNS settings.
+
+Actual Result:
+The workstation configuration displayed an incorrect default gateway of 192.168.10.254.
+
+The IPv4 address, subnet mask, and DNS server remained correctly configured.
+
+This identified a potential next-hop routing issue affecting communication with remote networks.
+
+Result: CONFIGURATION ERROR IDENTIFIED
+
+
+STEP 2: TEST LOCAL GATEWAY REACHABILITY
+
+Command:
+ping 192.168.10.1
+
+Purpose:
+Determine whether the workstation could reach the router's Office Network interface using local subnet communication.
+
+Actual Result:
+The workstation successfully communicated with 192.168.10.1.
+
+This confirmed that the router's local interface remained reachable despite the workstation's incorrect default gateway setting.
+
+The successful test demonstrated that local subnet communication did not require traffic to be forwarded through the configured default gateway.
+
+Result: PASSED
+
+
+STEP 3: TEST LOCAL SERVER CONNECTIVITY
+
+Command:
+ping 192.168.10.10
+
+Purpose:
+Verify that the workstation could communicate with the infrastructure server on the same subnet.
+
+Actual Result:
+The workstation successfully communicated with the infrastructure server.
+
+This confirmed that local network connectivity remained operational and that the issue was not caused by a physical connection failure or general local network outage.
+
+Result: PASSED
+
+
+STEP 4: TEST REMOTE ROUTER INTERFACE
+
+Command:
+ping 10.0.0.1
+
+Purpose:
+Determine whether the workstation could reach the router interface on the Application Network.
+
+Actual Result:
+The connectivity test failed as expected.
+
+The workstation was unable to reach the router's remote interface because its configured default gateway did not correspond to an operational next-hop router.
+
+Result: FAILED AS EXPECTED
+
+
+STEP 5: TEST REMOTE APPLICATION SERVER
+
+Command:
+ping 10.0.0.10
+
+Purpose:
+Determine whether the workstation could reach the application server on a separate IPv4 subnet.
+
+Actual Result:
+The connectivity test failed.
+
+Although local communication remained functional, the workstation could not forward traffic correctly to the remote Application Network.
+
+This confirmed that the problem affected inter-subnet communication rather than local connectivity.
+
+Result: FAILED AS EXPECTED
+
+
+STEP 6: INSPECT THE NETWORK PATH
+
+Command:
+tracert 10.0.0.10
+
+Purpose:
+Investigate the forwarding path between the affected workstation and the remote application server.
+
+Actual Result:
+The traceroute was unable to establish a successful path to the application server.
+
+The failed trace was consistent with the workstation attempting to use an incorrect default gateway for off-subnet traffic.
+
+This provided additional evidence supporting the suspected gateway configuration problem.
+
+Result: FAILED AS EXPECTED
+
+
+STEP 7: COMPARE AN UNAFFECTED WORKSTATION
+
+Device:
+PC-Operations
+
+Command:
+ping 10.0.0.10
+
+Purpose:
+Determine whether the issue was isolated to PC-Sales or affected the wider network.
+
+Actual Result:
+PC-Operations successfully communicated with the application server.
+
+This demonstrated that the router and application server remained operational.
+
+The successful comparison confirmed that the problem was isolated to the network configuration of PC-Sales.
+
+Result: PASSED
+
+
+STEP 8: TEST APPLICATION ACCESS
+
+URLs:
+
+http://10.0.0.10
+
+http://portal.lab.test
+
+Purpose:
+Determine whether the workstation could access the internal employee portal while its default gateway was incorrect.
+
+Actual Result:
+The employee portal could not be accessed using either its IPv4 address or hostname.
+
+The failed IP-based connection demonstrated that the application access issue was not caused solely by DNS resolution.
+
+The workstation could not establish communication with the remote application server because its default gateway was incorrectly configured.
+
+Result: FAILED AS EXPECTED
+
+--------------------------------------------------
+5. ROOT CAUSE ANALYSIS
+--------------------------------------------------
+
+Confirmed Root Cause:
+Incorrect default gateway configured on PC-Sales.
+
+Incorrect Gateway:
+192.168.10.254
+
+Correct Gateway:
+192.168.10.1
+
+Affected Function:
+Inter-Subnet IPv4 Communication
+
+Failure Type:
+Client-Side Network Configuration Error
+
+The default gateway identifies the router used by a workstation to forward traffic toward destinations outside its local IPv4 subnet.
+
+The workstation was intentionally configured to use 192.168.10.254, an address not assigned to an operational router.
+
+As a result, PC-Sales could communicate with local network resources but could not successfully forward traffic toward the Application Network.
+
+Diagnostic testing confirmed that both the router's local interface and infrastructure server remained reachable.
+
+However, communication with the remote router interface and application server failed.
+
+A comparison with PC-Operations confirmed that the shared network infrastructure remained operational.
+
+These findings isolated the failure to the incorrect default gateway configuration on PC-Sales.
+
+Root Cause Status: CONFIRMED
+
+--------------------------------------------------
+6. CORRECTIVE ACTION
+--------------------------------------------------
+
+The issue was resolved by restoring automatic IPv4 configuration through DHCP.
+
+Corrective Procedure:
+
+A) Opened PC-Sales IP Configuration settings.
+
+B) Changed the workstation from Static IPv4 configuration back to DHCP.
+
+C) Requested an updated network configuration from the infrastructure server.
+
+D) Verified that the workstation received a valid IPv4 address and subnet mask.
+
+E) Confirmed that the default gateway was restored to 192.168.10.1.
+
+F) Confirmed that the DNS server remained correctly configured as 192.168.10.10.
+
+G) Repeated local and remote network connectivity tests.
+
+H) Verified the network path to the application server.
+
+I) Confirmed successful access to the internal employee portal.
+
+The corrective action successfully restored communication with remote network resources.
+
+No modifications to the router, switches, infrastructure server, or application server were required.
+
+Corrective Action Status: SUCCESSFUL
+
+--------------------------------------------------
+7. POST-RESOLUTION VERIFICATION
+--------------------------------------------------
+
+TEST 01: WORKSTATION CONFIGURATION
+
+Command:
+ipconfig /all
+
+Actual Result:
+The workstation successfully obtained its network settings through DHCP.
+
+The configuration included a valid IPv4 address, the correct subnet mask, and the appropriate default gateway and DNS server.
+
+Default Gateway:
+192.168.10.1
+
+DNS Server:
+192.168.10.10
+
+Status: PASSED
+
+
+TEST 02: LOCAL NETWORK CONNECTIVITY
+
+Commands:
+
+ping 192.168.10.1
+ping 192.168.10.10
+
+Actual Result:
+Both connectivity tests completed successfully.
+
+PC-Sales maintained communication with its local router interface and infrastructure server.
+
+This confirmed that local subnet connectivity remained functional following the corrective action.
+
+Status: PASSED
+
+
+TEST 03: REMOTE NETWORK CONNECTIVITY
+
+Commands:
+
+ping 10.0.0.1
+ping 10.0.0.10
+
+Actual Result:
+Both connectivity tests completed successfully.
+
+PC-Sales regained communication with the router's Application Network interface and the internal application server.
+
+This verified that correcting the default gateway restored inter-subnet connectivity.
+
+Status: PASSED
+
+
+TEST 04: NETWORK PATH VERIFICATION
+
+Command:
+tracert 10.0.0.10
+
+Actual Result:
+The traceroute successfully identified a network path through the correct default gateway to the application server.
+
+The workstation forwarded traffic through 192.168.10.1 toward the remote destination.
+
+This confirmed that the corrected gateway configuration supported normal routing between network segments.
+
+Status: PASSED
+
+
+TEST 05: EMPLOYEE PORTAL ACCESS
+
+URL:
+http://portal.lab.test
+
+Actual Result:
+The internal employee portal loaded successfully following restoration of the correct default gateway.
+
+This confirmed that the workstation could once again communicate with the application server across the two network segments.
+
+Status: PASSED
+
+
+FINAL VERIFICATION:
+
+All post-resolution tests completed successfully.
+
+The workstation regained access to local and remote network resources.
+
+The internal employee portal was accessible through its DNS hostname.
+
+No additional connectivity issues were encountered.
+
+Overall Verification Status: PASSED
+
+--------------------------------------------------
+8. PREVENTIVE RECOMMENDATIONS
+--------------------------------------------------
+
+A) Use centrally managed DHCP configuration to distribute consistent network settings to employee workstations.
+
+B) Verify default gateway settings when a workstation can reach local resources but not remote networks.
+
+C) Distinguish local subnet communication from inter-subnet connectivity during troubleshooting.
+
+D) Compare affected workstations against functioning devices to determine whether the issue is isolated or widespread.
+
+E) Inspect IPv4 addressing, subnet masks, default gateways, and DNS configurations before modifying network infrastructure.
+
+F) Validate remote connectivity using ping and traceroute after correcting configuration errors.
+
+G) Confirm access to business applications following network configuration changes.
+
+H) Maintain documentation of approved gateway addresses and subnet assignments.
+
+I) Avoid unnecessary infrastructure changes when diagnostic evidence indicates a workstation-level configuration issue.
+
+--------------------------------------------------
+9. TECHNICAL SKILLS DEMONSTRATED
+--------------------------------------------------
+
+A) IPv4 Addressing
+
+Inspected and validated workstation IPv4 configuration within the Office Network.
+
+B) Default Gateway Troubleshooting
+
+Identified and resolved an incorrect default gateway preventing communication with remote resources.
+
+C) Inter-Subnet Connectivity Diagnostics
+
+Compared successful local network connectivity against failed communication with a separate subnet.
+
+D) DHCP Client Configuration
+
+Restored automatic network settings through the centralized DHCP service.
+
+E) Command-Line Network Testing
+
+Used ipconfig, ping, and traceroute to investigate workstation connectivity.
+
+F) Network Path Analysis
+
+Examined the forwarding path toward the application server to identify routing-related connectivity problems.
+
+G) Comparative Workstation Diagnostics
+
+Used an unaffected workstation to verify that shared network infrastructure remained operational.
+
+H) Root Cause Analysis
+
+Correlated workstation configuration settings with diagnostic test results to identify the underlying cause.
+
+I) Service Restoration and Verification
+
+Corrected the workstation configuration and verified restoration of network and application access.
+
+J) IT Support Incident Documentation
+
+Recorded incident symptoms, troubleshooting procedures, technical findings, corrective actions, and final verification results.
+
+--------------------------------------------------
+10. PORTFOLIO EVIDENCE
+--------------------------------------------------
+
+INC003_01_Healthy_Connectivity.png
+
+Documents successful local and remote connectivity before the simulated failure.
+
+
+INC003_02_Incorrect_Gateway.png
+
+Documents the intentionally incorrect default gateway configured on PC-Sales.
+
+
+INC003_03_Connectivity_Diagnosis.png
+
+Documents successful local network communication alongside failed connectivity to remote network resources.
+
+
+INC003_04_Application_Access_Failure.png
+
+Documents the inability to access the internal employee portal while the workstation's default gateway was incorrect.
+
+
+INC003_05_Gateway_Restored.png
+
+Documents the restored DHCP configuration and correct default gateway address.
+
+
+INC003_06_Connectivity_Restored.png
+
+Documents successful remote connectivity and application access after the corrective action.
+
+--------------------------------------------------
+11. INCIDENT RESOLUTION SUMMARY
+--------------------------------------------------
+
+Incident Status:
+RESOLVED
+
+Confirmed Root Cause:
+Incorrect default gateway configured on PC-Sales.
+
+Affected Function:
+Inter-Subnet IPv4 Communication
+
+Incorrect Gateway:
+192.168.10.254
+
+Correct Gateway:
+192.168.10.1
+
+Corrective Action:
+Restored automatic workstation network configuration through DHCP.
+
+Local Connectivity:
+PASSED
+
+Inter-Subnet Connectivity:
+PASSED
+
+Network Path Verification:
+PASSED
+
+Application Access:
+PASSED
+
+Additional Problems:
+None.
+
+Corrective Action Outcome:
+SUCCESSFUL
+
+The simulated default gateway misconfiguration was successfully diagnosed and resolved.
+
+Initial testing demonstrated that PC-Sales could communicate with local network resources but could not reach devices located on the separate Application Network.
+
+Workstation configuration inspection identified an incorrect default gateway.
+
+Comparative testing confirmed that the shared network infrastructure remained operational and the issue was isolated to PC-Sales.
+
+Restoring automatic network configuration through DHCP corrected the gateway and resolved the connectivity problem.
+
+All required post-resolution tests passed.
+
+--------------------------------------------------
+12. TECHNICAL OUTCOME AND LESSONS LEARNED
+--------------------------------------------------
+
+This incident demonstrated the importance of correct default gateway configuration in supporting communication between separate IPv4 networks.
+
+Although the affected workstation maintained connectivity with devices on its local subnet, its incorrect default gateway prevented it from communicating with remote network resources.
+
+The diagnostic process demonstrated how comparing successful local connectivity against failed remote connectivity can help isolate routing-related issues.
+
+Using ipconfig, ping, and traceroute, the investigation identified the workstation's incorrect gateway without making unnecessary changes to functioning network infrastructure.
+
+Comparison with an unaffected workstation further confirmed that the router and application server remained operational.
+
+Restoring the correct DHCP configuration resolved the issue and reestablished access to the internal employee portal.
+
+The exercise demonstrated a complete IT support troubleshooting workflow, including initial assessment, network diagnostics, issue isolation, root cause analysis, corrective action, and post-resolution verification.
+
+This project stage provided practical experience with IPv4 addressing, default gateway troubleshooting, routing fundamentals, DHCP client configuration, network path analysis, and professional technical documentation in a simulated business environment.
+
+--------------------------------------------------
+13. NEXT INCIDENT
+--------------------------------------------------
+
+INC-004: DHCP SERVICE FAILURE
+
+Simulate the failure of the centralized DHCP service during the onboarding of a new employee workstation.
+
+The next incident will focus on automatic IPv4 address assignment, DHCP service availability, network configuration troubleshooting, and restoration of client connectivity.
+
+==================================================
+END OF INCIDENT INC-003
+==================================================

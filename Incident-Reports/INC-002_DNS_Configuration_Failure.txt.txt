@@ -1,0 +1,552 @@
+==================================================
+IT SUPPORT INCIDENT REPORT
+INC-002: DNS CONFIGURATION FAILURE
+==================================================
+
+PROJECT: Northstar Office Solutions
+PLATFORM: Cisco Packet Tracer
+ENVIRONMENT: Simulated Small-Business Network
+
+INCIDENT ID: INC-002
+CATEGORY: Network Connectivity
+SUBCATEGORY: DNS / Hostname Resolution
+PRIORITY: Medium (Simulated)
+AFFECTED DEPARTMENT: Operations
+AFFECTED DEVICE: PC-Operations
+FINAL STATUS: RESOLVED
+
+--------------------------------------------------
+1. INCIDENT DESCRIPTION
+--------------------------------------------------
+
+A simulated employee in the Operations department reported being unable to access the company's internal employee portal using its normal hostname.
+
+The workstation remained connected to the network, and other employees continued accessing the application without difficulty.
+
+The objective was to investigate the hostname resolution failure, determine its root cause, restore normal DNS functionality, and verify access to the internal application.
+
+The incident was successfully diagnosed and resolved through systematic troubleshooting without additional complications.
+
+--------------------------------------------------
+2. INITIAL NETWORK CONDITIONS
+--------------------------------------------------
+
+Affected Workstation:
+PC-Operations
+
+Office Network:
+192.168.10.0/24
+
+Subnet Mask:
+255.255.255.0
+
+Default Gateway:
+192.168.10.1
+
+Infrastructure Server:
+192.168.10.10
+
+Application Server:
+10.0.0.10
+
+Internal Application:
+portal.lab.test
+
+Correct DNS Server:
+192.168.10.10
+
+Before introducing the simulated failure, the workstation successfully communicated with the application server and resolved the internal application hostname.
+
+The employee portal loaded successfully using its DNS hostname.
+
+These baseline tests confirmed that DNS resolution, IP connectivity, and HTTP application services were operational before the incident.
+
+Initial Network Status: OPERATIONAL
+
+--------------------------------------------------
+3. INCIDENT SIMULATION
+--------------------------------------------------
+
+The DNS configuration of PC-Operations was intentionally modified.
+
+The workstation was changed from DHCP to Static IPv4 configuration while preserving its previously assigned IP address, subnet mask, and default gateway.
+
+The DNS server address was changed from:
+
+192.168.10.10
+
+To:
+
+192.168.10.99
+
+The replacement address did not correspond to an active DNS server in the simulated environment.
+
+This introduced a client-side DNS configuration failure without disrupting the workstation's physical connection, IP addressing, or default gateway.
+
+The central DHCP and DNS infrastructure remained operational.
+
+Following the configuration change, the workstation could communicate with network resources using their IPv4 addresses but could no longer successfully resolve the internal application hostname.
+
+Simulation Result: SUCCESSFUL
+
+--------------------------------------------------
+4. DIAGNOSTIC PROCEDURE
+--------------------------------------------------
+
+STEP 1: VERIFY LOCAL CONNECTIVITY
+
+Command:
+ping 192.168.10.1
+
+Purpose:
+Determine whether the workstation could communicate with its default gateway.
+
+Actual Result:
+The workstation successfully communicated with the router's Office Network interface.
+
+This confirmed that local IP connectivity remained operational despite the reported application access issue.
+
+Result: PASSED
+
+
+STEP 2: VERIFY INFRASTRUCTURE CONNECTIVITY
+
+Command:
+ping 192.168.10.10
+
+Purpose:
+Verify that the central infrastructure server remained reachable by IPv4 address.
+
+Actual Result:
+The workstation successfully communicated with the infrastructure server.
+
+This confirmed that the workstation could reach the server hosting the company's DNS service.
+
+Result: PASSED
+
+
+STEP 3: VERIFY APPLICATION SERVER CONNECTIVITY
+
+Command:
+ping 10.0.0.10
+
+Purpose:
+Determine whether the workstation could reach the application server without relying on DNS.
+
+Actual Result:
+The workstation successfully communicated with the application server using its IPv4 address.
+
+This demonstrated that routing between the Office and Application networks remained functional.
+
+Result: PASSED
+
+
+STEP 4: TEST DNS RESOLUTION
+
+Command:
+nslookup portal.lab.test
+
+Purpose:
+Determine whether the workstation could resolve the internal application hostname.
+
+Actual Result:
+The DNS lookup failed as expected.
+
+The workstation was configured to query 192.168.10.99, which did not provide DNS service.
+
+This indicated that the issue involved name resolution rather than general IP connectivity.
+
+Result: FAILED AS EXPECTED
+
+
+STEP 5: TEST HOSTNAME CONNECTIVITY
+
+Command:
+ping portal.lab.test
+
+Purpose:
+Determine whether the workstation could resolve and contact the application using its hostname.
+
+Actual Result:
+The workstation was unable to resolve the application hostname.
+
+This confirmed that the DNS configuration issue affected hostname-based connectivity.
+
+Result: FAILED AS EXPECTED
+
+
+STEP 6: COMPARE HTTP ACCESS
+
+Test A:
+http://portal.lab.test
+
+Actual Result:
+The employee portal failed to load when accessed through its hostname.
+
+Result: FAILED AS EXPECTED
+
+Test B:
+http://10.0.0.10
+
+Actual Result:
+The employee portal loaded successfully when accessed directly through the application server's IPv4 address.
+
+Result: PASSED
+
+Technical Finding:
+The difference between the two tests demonstrated that the application server and HTTP service remained available.
+
+The failure was isolated to DNS hostname resolution rather than the underlying network connection or application service.
+
+
+STEP 7: COMPARE UNAFFECTED WORKSTATION
+
+Device:
+PC-Sales
+
+Command:
+nslookup portal.lab.test
+
+Purpose:
+Determine whether the failure affected the central DNS infrastructure or only the Operations workstation.
+
+Actual Result:
+PC-Sales successfully resolved portal.lab.test to 10.0.0.10.
+
+The workstation also successfully accessed the employee portal through its hostname.
+
+These results demonstrated that the central DNS service remained operational and that the failure was isolated to PC-Operations.
+
+Result: PASSED
+
+--------------------------------------------------
+5. ROOT CAUSE ANALYSIS
+--------------------------------------------------
+
+Confirmed Root Cause:
+Incorrect DNS server address configured on PC-Operations.
+
+Incorrect DNS Server:
+192.168.10.99
+
+Correct DNS Server:
+192.168.10.10
+
+Affected Function:
+DNS Hostname Resolution
+
+Failure Type:
+Client-Side Network Configuration Error
+
+The workstation was intentionally configured to send DNS requests to an address that did not host an active DNS service.
+
+As a result, the workstation could not translate the internal application hostname into its corresponding IPv4 address.
+
+IP connectivity remained operational because the workstation retained its valid IPv4 address, subnet mask, and default gateway.
+
+Diagnostic testing confirmed that the application server was accessible directly by IPv4 address.
+
+A comparison with PC-Sales further confirmed that the shared DNS infrastructure remained operational.
+
+These findings isolated the failure to the DNS configuration of the affected workstation.
+
+Root Cause Status: CONFIRMED
+
+--------------------------------------------------
+6. CORRECTIVE ACTION
+--------------------------------------------------
+
+The issue was resolved by restoring automatic network configuration through DHCP.
+
+Corrective Procedure:
+
+A) Opened the workstation's IP Configuration settings.
+
+B) Changed the workstation from Static IPv4 configuration back to DHCP.
+
+C) Requested an updated network configuration from the infrastructure server.
+
+D) Verified that the workstation received valid network settings.
+
+E) Confirmed that the DNS server address was restored to 192.168.10.10.
+
+F) Verified that the default gateway remained correctly configured as 192.168.10.1.
+
+G) Repeated IP connectivity and DNS resolution tests.
+
+H) Confirmed successful access to the internal employee portal.
+
+The corrective action successfully restored the workstation's DNS functionality.
+
+No router, switch, application server, or central DNS service changes were required.
+
+Corrective Action Status: SUCCESSFUL
+
+--------------------------------------------------
+7. POST-RESOLUTION VERIFICATION
+--------------------------------------------------
+
+TEST 01: WORKSTATION IP CONFIGURATION
+
+Command:
+ipconfig /all
+
+Actual Result:
+The workstation successfully received its network configuration through DHCP.
+
+The assigned settings included a valid IPv4 address, the correct subnet mask, default gateway, and DNS server.
+
+Default Gateway:
+192.168.10.1
+
+DNS Server:
+192.168.10.10
+
+Status: PASSED
+
+
+TEST 02: APPLICATION SERVER CONNECTIVITY
+
+Command:
+ping 10.0.0.10
+
+Actual Result:
+The workstation successfully communicated with the application server after restoring its network configuration.
+
+This confirmed that inter-subnet IP connectivity remained operational.
+
+Status: PASSED
+
+
+TEST 03: DNS RESOLUTION
+
+Command:
+nslookup portal.lab.test
+
+Actual Result:
+The DNS lookup completed successfully.
+
+The hostname portal.lab.test resolved to its configured IPv4 address, 10.0.0.10.
+
+This confirmed that the workstation was successfully communicating with the correct DNS service.
+
+Status: PASSED
+
+
+TEST 04: HOSTNAME CONNECTIVITY
+
+Command:
+ping portal.lab.test
+
+Actual Result:
+The workstation successfully resolved the internal application hostname and communicated with the destination server.
+
+This verified restoration of hostname-based network connectivity.
+
+Status: PASSED
+
+
+TEST 05: EMPLOYEE PORTAL
+
+URL:
+http://portal.lab.test
+
+Actual Result:
+The internal employee portal loaded successfully after the workstation's DNS configuration was restored.
+
+This confirmed that DNS name resolution and HTTP application access were functioning together as intended.
+
+Status: PASSED
+
+
+FINAL VERIFICATION:
+
+All post-resolution tests completed successfully.
+
+The affected workstation regained normal access to the internal application through both its hostname and IPv4 address.
+
+The simulated incident was fully resolved without additional complications.
+
+Overall Verification Status: PASSED
+
+--------------------------------------------------
+8. PREVENTIVE RECOMMENDATIONS
+--------------------------------------------------
+
+A) Use centrally managed DHCP settings to provide consistent network configurations to employee workstations.
+
+B) Verify DNS server addresses when investigating hostname-related connectivity failures.
+
+C) Compare application access by hostname and IPv4 address to distinguish DNS failures from general network connectivity issues.
+
+D) Inspect workstation network configurations before making changes to shared infrastructure.
+
+E) Compare affected devices against functioning workstations to determine whether a problem is isolated or widespread.
+
+F) Verify successful DNS resolution and application access after applying configuration changes.
+
+G) Maintain documented infrastructure IP addresses and approved DNS server settings.
+
+H) Avoid unnecessary changes to functioning routers, switches, and servers when the evidence indicates a client-side problem.
+
+--------------------------------------------------
+9. TECHNICAL SKILLS DEMONSTRATED
+--------------------------------------------------
+
+A) DNS Client Troubleshooting
+
+Diagnosed a simulated DNS configuration failure affecting an employee workstation.
+
+B) IPv4 Addressing Verification
+
+Confirmed that IP connectivity remained operational despite the hostname resolution failure.
+
+C) DHCP Client Configuration
+
+Restored automatic workstation network configuration through DHCP.
+
+D) Command-Line Network Diagnostics
+
+Used ping and nslookup commands to investigate connectivity and name resolution.
+
+E) Hostname Resolution Testing
+
+Compared successful IPv4 connectivity against failed DNS hostname resolution.
+
+F) Network Issue Isolation
+
+Identified the difference between a client-side DNS configuration failure and an infrastructure-wide DNS outage.
+
+G) Comparative Workstation Diagnostics
+
+Used a functioning employee workstation to confirm that shared network services remained operational.
+
+H) Root Cause Analysis
+
+Correlated workstation configuration settings with diagnostic test results to identify the source of the failure.
+
+I) Service Restoration and Verification
+
+Restored the correct DNS configuration and verified successful application access.
+
+J) Technical Incident Documentation
+
+Recorded symptoms, diagnostic procedures, findings, corrective actions, and final verification results.
+
+--------------------------------------------------
+10. PORTFOLIO EVIDENCE
+--------------------------------------------------
+
+INC002_01_Healthy_DNS.png
+
+Documents successful DNS resolution before the simulated failure.
+
+
+INC002_02_Incorrect_DNS.png
+
+Documents the intentionally incorrect DNS server address assigned to PC-Operations.
+
+
+INC002_03_DNS_Failure_Diagnosis.png
+
+Documents the failed DNS resolution tests alongside successful IP-based connectivity.
+
+
+INC002_04_Working_DNS_Comparison.png
+
+Documents successful DNS resolution on PC-Sales, confirming that the shared infrastructure remained operational.
+
+
+INC002_05_DNS_Configuration_Restored.png
+
+Documents the workstation's restored DHCP configuration and correct DNS server address.
+
+
+INC002_06_DNS_Access_Restored.png
+
+Documents successful hostname resolution and application access following the corrective action.
+
+--------------------------------------------------
+11. INCIDENT RESOLUTION SUMMARY
+--------------------------------------------------
+
+Incident Status:
+RESOLVED
+
+Confirmed Root Cause:
+Incorrect DNS server configuration on PC-Operations.
+
+Affected Service:
+DNS Hostname Resolution
+
+Incorrect DNS Address:
+192.168.10.99
+
+Correct DNS Address:
+192.168.10.10
+
+Corrective Action:
+Restored automatic workstation configuration through DHCP.
+
+Local IP Connectivity:
+PASSED
+
+Inter-Subnet Connectivity:
+PASSED
+
+DNS Resolution:
+PASSED
+
+Application Access by IP:
+PASSED
+
+Application Access by Hostname:
+PASSED
+
+Additional Problems:
+None.
+
+Corrective Action Outcome:
+SUCCESSFUL
+
+The simulated DNS configuration failure was successfully diagnosed and resolved.
+
+Diagnostic testing demonstrated that the workstation maintained normal IP connectivity but could not resolve the internal application hostname.
+
+Comparative testing confirmed that the infrastructure server and other employee workstations remained operational.
+
+Restoring the workstation's DHCP configuration corrected the DNS server address and resolved the problem.
+
+All required post-resolution tests passed.
+
+--------------------------------------------------
+12. TECHNICAL OUTCOME AND LESSONS LEARNED
+--------------------------------------------------
+
+This incident demonstrated the importance of distinguishing DNS hostname resolution problems from general IP connectivity failures.
+
+Although the affected workstation could communicate with local and remote network devices using IPv4 addresses, an incorrect DNS server configuration prevented hostname-based access to an internal business application.
+
+By comparing direct IP connectivity, DNS lookup results, browser access, and the behavior of a functioning workstation, the investigation isolated the problem to a specific client-side configuration error.
+
+The incident reinforced the importance of systematic troubleshooting, accurate interpretation of diagnostic results, and avoiding unnecessary modifications to functioning network infrastructure.
+
+Restoring automatic network configuration through DHCP resolved the problem and successfully restored access to the internal employee portal.
+
+The exercise demonstrated a complete IT support troubleshooting workflow, including issue identification, fault isolation, root cause analysis, corrective action, and post-resolution verification.
+
+The project provided practical experience with TCP/IP diagnostics, DNS troubleshooting, DHCP client configuration, and technical incident documentation in a simulated small-business environment.
+
+--------------------------------------------------
+13. NEXT INCIDENT
+--------------------------------------------------
+
+INC-003: DEFAULT GATEWAY MISCONFIGURATION
+
+Simulate an incorrect workstation default gateway that prevents communication with resources outside the Office Network.
+
+The next incident will focus on distinguishing local subnet connectivity from inter-subnet routing failures.
+
+==================================================
+END OF INCIDENT INC-002
+==================================================

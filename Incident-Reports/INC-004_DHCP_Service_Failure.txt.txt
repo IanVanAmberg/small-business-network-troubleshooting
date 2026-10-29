@@ -1,0 +1,645 @@
+==================================================
+IT SUPPORT INCIDENT REPORT
+INC-004: DHCP SERVICE FAILURE
+==================================================
+
+PROJECT: Northstar Office Solutions
+PLATFORM: Cisco Packet Tracer
+ENVIRONMENT: Simulated Small-Business Network
+
+INCIDENT ID: INC-004
+CATEGORY: Network Connectivity
+SUBCATEGORY: DHCP / Automatic IPv4 Configuration
+PRIORITY: Medium (Simulated)
+AFFECTED DEPARTMENT: New Employee Onboarding
+AFFECTED DEVICE: PC-NewHire
+FINAL STATUS: RESOLVED
+
+--------------------------------------------------
+1. INCIDENT DESCRIPTION
+--------------------------------------------------
+
+A simulated new employee reported that their workstation could not connect to the company network or access the internal employee portal.
+
+The workstation was physically connected to the office switch but was unable to obtain the required network configuration automatically.
+
+Existing employee workstations retained their previously assigned configurations and remained operational.
+
+The objective was to investigate the failed DHCP address assignment, identify the affected service, restore automatic IPv4 configuration, and verify successful access to company resources.
+
+The incident was successfully diagnosed and resolved through systematic troubleshooting without additional complications.
+
+--------------------------------------------------
+2. INITIAL NETWORK CONDITIONS
+--------------------------------------------------
+
+Affected Workstation:
+PC-NewHire
+
+Office Network:
+192.168.10.0/24
+
+Subnet Mask:
+255.255.255.0
+
+Default Gateway:
+192.168.10.1
+
+DHCP/DNS Server:
+192.168.10.10
+
+DHCP Address Range:
+192.168.10.100 - 192.168.10.124
+
+Application Server:
+10.0.0.10
+
+Internal Application:
+portal.lab.test
+
+Physical Connection:
+PC-NewHire FastEthernet0
+to
+SW-Office FastEthernet0/4
+
+Before introducing the simulated failure, the DHCP service was confirmed to be operational.
+
+Existing workstations successfully maintained their assigned network configurations and communicated with local and remote network resources.
+
+These baseline tests confirmed that the shared network infrastructure was operational before the incident.
+
+Initial Network Status: OPERATIONAL
+
+--------------------------------------------------
+3. INCIDENT SIMULATION
+--------------------------------------------------
+
+The DHCP service on SRV-Infra was intentionally disabled.
+
+The server's static IPv4 configuration, DNS service, and physical network connections were left unchanged.
+
+A new employee workstation named PC-NewHire was added and connected to SW-Office using a Copper Straight-Through Ethernet cable.
+
+The workstation was configured to request its IPv4 settings automatically through DHCP.
+
+With the DHCP service disabled, the workstation failed to obtain a valid network configuration.
+
+As a result, the new employee workstation could not communicate normally with the company network or access the internal employee portal.
+
+Existing workstations remained operational because they retained their previously assigned DHCP configurations.
+
+Simulation Result: SUCCESSFUL
+
+--------------------------------------------------
+4. DIAGNOSTIC PROCEDURE
+--------------------------------------------------
+
+STEP 1: REQUEST AUTOMATIC IP CONFIGURATION
+
+Device:
+PC-NewHire
+
+Method:
+Desktop > IP Configuration > DHCP
+
+Purpose:
+Determine whether the newly connected workstation could obtain network settings automatically.
+
+Actual Result:
+The workstation attempted to obtain its network configuration through DHCP.
+
+The DHCP request failed because the centralized DHCP service was unavailable.
+
+The workstation did not receive a valid Office Network configuration.
+
+Result: FAILED AS EXPECTED
+
+
+STEP 2: INSPECT WORKSTATION CONFIGURATION
+
+Command:
+ipconfig /all
+
+Purpose:
+Inspect the assigned IPv4 address, subnet mask, default gateway, and DNS server.
+
+Actual Result:
+The workstation did not possess the expected DHCP-assigned network configuration.
+
+The missing valid Office Network settings prevented normal communication with company resources.
+
+This finding was consistent with unsuccessful automatic address assignment.
+
+Result: INVALID NETWORK CONFIGURATION IDENTIFIED
+
+
+STEP 3: TEST LOCAL GATEWAY CONNECTIVITY
+
+Command:
+ping 192.168.10.1
+
+Purpose:
+Determine whether the workstation could communicate with its expected default gateway.
+
+Actual Result:
+The connectivity test failed.
+
+The workstation was unable to communicate with the Office Network router interface because it had not obtained the required network configuration.
+
+Result: FAILED AS EXPECTED
+
+
+STEP 4: TEST INFRASTRUCTURE CONNECTIVITY
+
+Command:
+ping 192.168.10.10
+
+Purpose:
+Determine whether the workstation could communicate with the infrastructure server.
+
+Actual Result:
+The connectivity test failed.
+
+Although the infrastructure server remained physically connected to the network, PC-NewHire lacked the valid IPv4 configuration required for normal communication.
+
+Result: FAILED AS EXPECTED
+
+
+STEP 5: VERIFY PHYSICAL CONNECTION
+
+Device:
+SW-Office
+
+Interface:
+FastEthernet0/4
+
+Command:
+show interfaces fastEthernet0/4
+
+Purpose:
+Determine whether the new employee workstation maintained an operational physical Ethernet connection.
+
+Actual Result:
+The switch interface displayed an operational status of up/up.
+
+This confirmed that the workstation had an active physical connection to SW-Office.
+
+The successful physical link verification helped eliminate a disconnected cable or inactive switch port as the cause of the reported connectivity problem.
+
+Result: PASSED
+
+
+STEP 6: COMPARE EXISTING WORKSTATION
+
+Device:
+PC-Operations
+
+Commands:
+
+ipconfig /all
+ping 192.168.10.10
+ping 10.0.0.10
+
+Purpose:
+Determine whether existing employee workstations retained their network configurations and connectivity.
+
+Actual Result:
+PC-Operations maintained its previously assigned IPv4 configuration.
+
+The workstation successfully communicated with the infrastructure server and application server.
+
+These results confirmed that the shared network infrastructure remained operational for devices with valid existing network configurations.
+
+The comparison supported further investigation of automatic IP assignment rather than a widespread routing or physical connectivity failure.
+
+Result: PASSED
+
+
+STEP 7: INSPECT DHCP SERVICE
+
+Device:
+SRV-Infra
+
+Location:
+Services > DHCP
+
+Purpose:
+Determine whether the centralized DHCP service was available to respond to new client requests.
+
+Actual Result:
+The DHCP service was confirmed to be disabled.
+
+This finding explained why PC-NewHire could not obtain the required network configuration.
+
+The disabled DHCP service was identified as the direct cause of the new employee workstation's failed automatic IP assignment.
+
+Result: ROOT CAUSE CONFIRMED
+
+--------------------------------------------------
+5. ROOT CAUSE ANALYSIS
+--------------------------------------------------
+
+Confirmed Root Cause:
+DHCP service disabled on SRV-Infra.
+
+Affected Service:
+Dynamic Host Configuration Protocol
+
+Affected Device:
+PC-NewHire
+
+DHCP Server:
+192.168.10.10
+
+Failure Type:
+Centralized Network Service Outage
+
+The DHCP service is responsible for automatically providing workstations with IPv4 addresses, subnet masks, default gateways, and DNS server information.
+
+During the simulated incident, the DHCP service on SRV-Infra was intentionally disabled.
+
+As a result, PC-NewHire could not obtain the valid network configuration required for normal communication with company resources.
+
+Diagnostic testing confirmed that the workstation's physical Ethernet connection remained operational.
+
+Existing workstations also retained connectivity, demonstrating that the router, switches, and application server remained functional.
+
+The combination of failed DHCP assignment, missing valid workstation configuration, operational physical connectivity, and disabled DHCP service isolated the issue to DHCP service availability.
+
+The incident also demonstrated that existing workstations may continue functioning during a DHCP outage while their previously assigned network configurations remain usable.
+
+Root Cause Status: CONFIRMED
+
+--------------------------------------------------
+6. CORRECTIVE ACTION
+--------------------------------------------------
+
+The issue was resolved by restoring the centralized DHCP service on SRV-Infra.
+
+Corrective Procedure:
+
+A) Opened SRV-Infra and navigated to the DHCP service configuration.
+
+B) Changed the DHCP service status from Off to On.
+
+C) Verified that the existing DHCP address pool and network settings remained correctly configured.
+
+D) Returned to PC-NewHire and opened its IP Configuration settings.
+
+E) Triggered a new DHCP request by switching from Static to DHCP.
+
+F) Confirmed that the workstation successfully received a valid IPv4 configuration.
+
+G) Verified the assigned subnet mask, default gateway, and DNS server.
+
+H) Tested local network connectivity and communication with the application server.
+
+I) Verified DNS hostname resolution.
+
+J) Confirmed successful access to the internal employee portal.
+
+The corrective action successfully restored automatic IPv4 configuration for PC-NewHire.
+
+No modifications to the router, switches, or application server were required.
+
+Corrective Action Status: SUCCESSFUL
+
+--------------------------------------------------
+7. POST-RESOLUTION VERIFICATION
+--------------------------------------------------
+
+TEST 01: DHCP ADDRESS ASSIGNMENT
+
+Method:
+Desktop > IP Configuration > DHCP
+
+Actual Result:
+PC-NewHire successfully obtained its network configuration from the restored DHCP service.
+
+The workstation received a valid IPv4 address within the configured DHCP pool.
+
+The assigned address was unique and did not conflict with the existing employee workstations.
+
+Subnet Mask:
+255.255.255.0
+
+Default Gateway:
+192.168.10.1
+
+DNS Server:
+192.168.10.10
+
+The successful assignment confirmed that the DHCP service was operational.
+
+Status: PASSED
+
+
+TEST 02: LOCAL GATEWAY CONNECTIVITY
+
+Command:
+ping 192.168.10.1
+
+Actual Result:
+The workstation successfully communicated with the router's Office Network interface.
+
+This confirmed that the new employee workstation could communicate with its local default gateway after obtaining valid network settings.
+
+Status: PASSED
+
+
+TEST 03: INFRASTRUCTURE CONNECTIVITY
+
+Command:
+ping 192.168.10.10
+
+Actual Result:
+The workstation successfully communicated with the infrastructure server.
+
+This verified local network connectivity between the newly configured workstation and the server providing DHCP and DNS services.
+
+Status: PASSED
+
+
+TEST 04: APPLICATION SERVER CONNECTIVITY
+
+Command:
+ping 10.0.0.10
+
+Actual Result:
+The workstation successfully communicated with the application server located on the separate Application Network.
+
+This confirmed that the DHCP-provided default gateway configuration supported normal inter-subnet communication.
+
+Status: PASSED
+
+
+TEST 05: DNS RESOLUTION
+
+Command:
+nslookup portal.lab.test
+
+Actual Result:
+The DNS query completed successfully.
+
+The hostname portal.lab.test correctly resolved to the application server's IPv4 address, 10.0.0.10.
+
+This confirmed that the workstation received the correct DNS server information and could successfully use the internal DNS service.
+
+Status: PASSED
+
+
+TEST 06: EMPLOYEE PORTAL ACCESS
+
+URL:
+http://portal.lab.test
+
+Actual Result:
+The internal Northstar Employee Portal loaded successfully.
+
+This verified that the new employee workstation could access the company application using its internal DNS hostname.
+
+The successful test confirmed that DHCP configuration, DNS resolution, routing, and HTTP application access were functioning together correctly.
+
+Status: PASSED
+
+
+FINAL VERIFICATION:
+
+All post-resolution tests completed successfully.
+
+PC-NewHire obtained a valid network configuration and successfully communicated with local and remote network resources.
+
+The workstation also successfully resolved and accessed the internal employee portal.
+
+The simulated DHCP outage was fully resolved without additional complications.
+
+Overall Verification Status: PASSED
+
+--------------------------------------------------
+8. PREVENTIVE RECOMMENDATIONS
+--------------------------------------------------
+
+A) Monitor DHCP service availability to identify disruptions before they affect employee onboarding or address renewal.
+
+B) Maintain accurate documentation of DHCP address pools, subnet masks, default gateways, and DNS server configurations.
+
+C) Verify physical Ethernet connectivity before investigating DHCP service failures.
+
+D) Inspect workstation IPv4 configurations when automatic address assignment fails.
+
+E) Distinguish valid DHCP-assigned addresses from link-local or incomplete configurations.
+
+F) Compare affected devices with existing functioning workstations to determine the scope of an incident.
+
+G) Verify DHCP service status before making unnecessary changes to routers or switches.
+
+H) Confirm that newly configured workstations receive unique IPv4 addresses to prevent address conflicts.
+
+I) Perform complete post-resolution testing, including local connectivity, inter-subnet communication, DNS resolution, and application access.
+
+J) Consider implementing DHCP redundancy and service monitoring in production environments where continued network availability is essential.
+
+--------------------------------------------------
+9. TECHNICAL SKILLS DEMONSTRATED
+--------------------------------------------------
+
+A) DHCP Service Troubleshooting
+
+Diagnosed a simulated DHCP service outage that prevented a newly connected workstation from receiving its network configuration.
+
+B) Automatic IPv4 Address Assignment
+
+Verified successful DHCP address allocation following restoration of the centralized service.
+
+C) New Workstation Network Onboarding
+
+Connected and configured a new employee workstation for access to company network resources.
+
+D) TCP/IP Configuration Diagnostics
+
+Used workstation network configuration inspection to identify missing or invalid addressing information.
+
+E) Physical Connectivity Verification
+
+Inspected switch interface status to confirm the workstation maintained an active Ethernet connection.
+
+F) Network Service Availability Testing
+
+Verified the operational status of the centralized DHCP service and identified the effect of service unavailability.
+
+G) Comparative Workstation Troubleshooting
+
+Compared the affected new workstation against an existing employee device to isolate the problem.
+
+H) Root Cause Analysis
+
+Correlated failed DHCP requests, incomplete IP configuration, successful physical connectivity, and disabled service status to identify the underlying cause.
+
+I) Service Restoration
+
+Restored DHCP functionality and successfully obtained a new workstation configuration.
+
+J) Post-Resolution Connectivity Verification
+
+Validated gateway connectivity, infrastructure communication, application server access, and DNS hostname resolution.
+
+K) Technical Incident Documentation
+
+Recorded the simulated failure, diagnostic methods, technical findings, corrective actions, verification results, and preventive recommendations.
+
+--------------------------------------------------
+10. PORTFOLIO EVIDENCE
+--------------------------------------------------
+
+INC004_01_Healthy_DHCP_Service.png
+
+Documents the operational DHCP service and configured address pool before the simulated outage.
+
+
+INC004_02_DHCP_Service_Disabled.png
+
+Documents the intentionally disabled DHCP service on SRV-Infra.
+
+
+INC004_03_DHCP_Assignment_Failure.png
+
+Documents the unsuccessful DHCP request on the new employee workstation.
+
+
+INC004_04_Network_Diagnostics.png
+
+Documents the incomplete workstation network configuration and failed connectivity tests.
+
+
+INC004_05_DHCP_Root_Cause.png
+
+Documents the operational up/up status of SW-Office FastEthernet0/4, supporting the conclusion that the failure was not caused by a disconnected Ethernet cable.
+
+
+INC004_06_DHCP_Restored.png
+
+Documents the successful DHCP assignment and correct workstation network settings following service restoration.
+
+
+INC004_07_NewHire_Connectivity_Restored.png
+
+Documents successful connectivity and access to company resources after the corrective action.
+
+--------------------------------------------------
+11. INCIDENT RESOLUTION SUMMARY
+--------------------------------------------------
+
+Incident Status:
+RESOLVED
+
+Confirmed Root Cause:
+DHCP service disabled on SRV-Infra.
+
+Affected Service:
+Dynamic Host Configuration Protocol
+
+Affected Device:
+PC-NewHire
+
+DHCP Server:
+192.168.10.10
+
+Corrective Action:
+Restored the centralized DHCP service and renewed the new workstation's network configuration.
+
+Physical Network Connectivity:
+PASSED
+
+DHCP Address Assignment:
+PASSED
+
+Local Gateway Connectivity:
+PASSED
+
+Infrastructure Server Connectivity:
+PASSED
+
+Inter-Subnet Connectivity:
+PASSED
+
+DNS Resolution:
+PASSED
+
+Internal Employee Portal Access:
+PASSED
+
+Additional Problems:
+None.
+
+Corrective Action Outcome:
+SUCCESSFUL
+
+The simulated DHCP service failure was successfully diagnosed and resolved.
+
+Initial troubleshooting confirmed that PC-NewHire lacked a valid automatically assigned network configuration despite maintaining an operational physical Ethernet connection.
+
+Existing workstations continued functioning, demonstrating that the wider network infrastructure remained available.
+
+Inspection of SRV-Infra confirmed that the DHCP service was disabled.
+
+Reenabling the DHCP service and requesting a new client configuration successfully restored automatic IPv4 address assignment.
+
+All required post-resolution connectivity and application access tests passed.
+
+--------------------------------------------------
+12. TECHNICAL OUTCOME AND LESSONS LEARNED
+--------------------------------------------------
+
+This incident demonstrated the importance of DHCP service availability in supporting automatic workstation network configuration and employee onboarding.
+
+The simulated failure prevented a newly connected workstation from obtaining the network information required to communicate with company resources.
+
+Systematic troubleshooting established that the workstation's physical Ethernet connection remained operational, while the DHCP service responsible for providing its IPv4 configuration was unavailable.
+
+Comparing the affected workstation with existing devices helped distinguish a centralized DHCP service problem from a physical connectivity or routing failure.
+
+The investigation also demonstrated that existing workstations may continue operating during a DHCP service outage because they retain previously assigned network configurations.
+
+Restoring the DHCP service and renewing the workstation's network settings resolved the issue.
+
+Successful validation of local connectivity, inter-subnet routing, DNS resolution, and HTTP access confirmed that the workstation was fully operational.
+
+The exercise demonstrated a complete IT support troubleshooting workflow involving initial assessment, configuration inspection, fault isolation, root cause analysis, service restoration, and post-resolution verification.
+
+This project stage provided practical experience with DHCP administration, workstation onboarding, TCP/IP diagnostics, Cisco switch interface inspection, network service troubleshooting, and professional incident documentation in a simulated small-business environment.
+
+--------------------------------------------------
+13. PROJECT COMPLETION STATUS
+--------------------------------------------------
+
+INC-001: PHYSICAL CONNECTIVITY FAILURE
+Status: RESOLVED
+
+INC-002: DNS CONFIGURATION FAILURE
+Status: RESOLVED
+
+INC-003: DEFAULT GATEWAY MISCONFIGURATION
+Status: RESOLVED
+
+INC-004: DHCP SERVICE FAILURE
+Status: RESOLVED
+
+All four planned network troubleshooting incidents have been completed successfully.
+
+Each incident demonstrates a different category of network connectivity failure and includes documented diagnostic procedures, corrective actions, and verification results.
+
+--------------------------------------------------
+14. NEXT PROJECT STAGE
+--------------------------------------------------
+
+FINAL NETWORK PROJECT REVIEW AND PUBLICATION
+
+Review the completed network architecture, router configurations, DHCP and DNS services, application server, and all four troubleshooting incident reports.
+
+Organize technical documentation, Packet Tracer simulation files, and screenshots into a professional GitHub repository.
+
+Prepare a concise LinkedIn project description highlighting practical networking knowledge, structured troubleshooting, root cause analysis, service restoration, and incident documentation.
+
+==================================================
+END OF INCIDENT INC-004
+==================================================
